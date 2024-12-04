@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapbox Tooltip Example</title>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { width: 100%; height: 100vh; }
+        .tooltip {
+            position: absolute;
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+            pointer-events: none;
+            transition: opacity 0.2s;
+            opacity: 0;
+        }
+        .tooltip.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<!--mapbox-gl-geocoder plugin-->
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.min.js"></script>    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.css" type="text/css">
+<div id="map"></div>
+<div id="tooltip" class="tooltip"></div>
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibXVoYW1tYWRyaWZxeSIsImEiOiJjbGptenU2Z2QwdzJjM2xyN2Rham1ndXhoIn0.5_qenbJijy4l7c8xhJBkkQ';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/muhammadrifqy/clf0v0keg003w01pe1pysoc2r',
+        center: [102.0, -0.5], // Starting position [lng, lat]
+        zoom: 5 // Starting zoom
+    });
+
+    const tooltip = document.getElementById('tooltip');
+
+    map.on('click', (e) => {
+        const coordinates = e.lngLat;
+        const lng = coordinates.lng.toFixed(8);
+        const lat = coordinates.lat.toFixed(8);
+
+        tooltip.innerHTML = `Longitude: ${lng}<br>Latitude: ${lat}`;
+        tooltip.style.left = `${e.point.x}px`;
+        tooltip.style.top = `${e.point.y}px`;
+        tooltip.classList.add('visible');
+    });
+
+    map.on('mousemove', () => {
+        tooltip.classList.remove('visible');
+    });
+
+    // Adjust tooltip position for mobile devices
+    window.addEventListener('resize', () => {
+        const isMobile = window.innerWidth <= 768; // Adjust breakpoint as needed
+        if (isMobile) {
+            tooltip.style.fontSize = '12px'; // Smaller font size for mobile
+        } else {
+            tooltip.style.fontSize = '14px'; // Default font size for desktop
+        }
+    });
+
+    //geocoder
+    const geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl
+    });
+
+    map.addControl(geocoder);
+</script>
+
+</body>
+</html>
